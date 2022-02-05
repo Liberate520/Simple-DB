@@ -1,7 +1,7 @@
 package ru.samsung.simpledb;
 
 public class Person {
-    int id;
+    long id;
     String name;
     int points;
 }

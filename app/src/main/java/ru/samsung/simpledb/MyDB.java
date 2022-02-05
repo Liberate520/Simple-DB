@@ -1,11 +1,16 @@
 package ru.samsung.simpledb;
 
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MyDB {
     private static String DATABASE_NAME = "simple.db";
@@ -25,6 +30,61 @@ public class MyDB {
     public MyDB(Context context) {
         OpenHelper mOpenHelper = new OpenHelper(context);
         database = mOpenHelper.getWritableDatabase();
+    }
+
+    public Person select(int id){
+        Cursor cursor = database.query(TABLE_NAME, null, COLUMN_ID + "=" + id, null, null, null, null);
+        Person person;
+        if (cursor.moveToFirst()) {
+            person = new Person();
+            person.id = cursor.getLong(NUM_COLUMN_ID);
+            person.name = cursor.getString(NUM_COLUMN_NAME);
+            person.points = cursor.getInt(NUM_COLUMN_POINTS);
+            cursor.close();
+            return person;
+        }
+        cursor.close();
+        return null;
+    }
+
+    public List<Person> selectAll(){
+        Cursor cursor = database.query(TABLE_NAME, null, null, null, null, null, null);
+        ArrayList<Person> list = new ArrayList<>();
+        cursor.moveToFirst();
+        if (!cursor.isAfterLast()) {
+            do {
+                Person person = new Person();
+                person.id = cursor.getLong(NUM_COLUMN_ID);
+                person.name = cursor.getString(NUM_COLUMN_NAME);
+                person.points = cursor.getInt(NUM_COLUMN_POINTS);
+                list.add(person);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return list;
+    }
+
+    public long insert(List<Person> list){
+        if (list.size() == 0){
+            return 0;
+        }
+        long count = 0;
+        for (int i = 0; i < list.size(); i++) {
+            Person person = list.get(i);
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(COLUMN_NAME, person.name);
+            contentValues.put(COLUMN_POINTS, person.points);
+            database.insert(TABLE_NAME, null, contentValues);
+            count++;
+        }
+        return count;
+    }
+
+    public long insert(Person person){
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(COLUMN_NAME, person.name);
+        contentValues.put(COLUMN_POINTS, person.points);
+        return database.insert(TABLE_NAME, null, contentValues);
     }
 
     class OpenHelper extends SQLiteOpenHelper {

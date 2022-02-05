@@ -36,11 +36,11 @@ public class PersonAdapter extends ArrayAdapter<Person> {
         }
         Person person = list.get(position);
 
-        TextView name = convertView.findViewById(R.id.name);
+        TextView name = convertView.findViewById(R.id.itemName);
         name.setText(person.name);
 
-        TextView points = convertView.findViewById(R.id.points);
-        points.setText(person.points);
+        TextView points = convertView.findViewById(R.id.itemPoint);
+        points.setText(String.valueOf(person.points));
 
         return convertView;
     }
