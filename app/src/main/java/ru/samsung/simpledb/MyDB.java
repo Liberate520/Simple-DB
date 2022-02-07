@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 
@@ -85,6 +86,18 @@ public class MyDB {
         contentValues.put(COLUMN_NAME, person.name);
         contentValues.put(COLUMN_POINTS, person.points);
         return database.insert(TABLE_NAME, null, contentValues);
+    }
+
+    public long delete(long id){
+        return database.delete(TABLE_NAME, COLUMN_ID + "=?", new String[]{String.valueOf(id)});
+    }
+
+    public long update(Person person){
+        Log.d("My", person.toString());
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(COLUMN_NAME, person.name);
+        contentValues.put(COLUMN_POINTS, person.points);
+        return database.update(TABLE_NAME, contentValues, COLUMN_ID + "=?", new String[]{String.valueOf(person.id)});
     }
 
     class OpenHelper extends SQLiteOpenHelper {
